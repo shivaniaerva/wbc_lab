@@ -1,3 +1,110 @@
+/* Basic styling to create a simple, clean layout. Customize as needed. */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .name {
+    font-size: 24px;
+    font-weight: bold;
+}
+.navbar .sections a,
+.navbar .links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
+}
+.navbar .sections a:hover,
+.navbar .links a:hover {
+    text-decoration: underline;
+}
+/* Add some padding to the main content to avoid overlapping with the fixed navbar */
+main {
+    padding-top: 60px;
+}
+
+#pass{
+text-align: center;
+}
+.container{
+margin-top: 30px;
+
+margin-right: 60px;
+width:100vw;
+display: flex;
+justify-content: space-evenly;
+background-color:white;
+flex-wrap: wrap;
+}
+.card{
+padding: 20px;
+margin:10px;
+width:300px;
+height:500px;
+background-color:white;
+}
+.tech{
+margin-top:20px;
+width:100vw;
+display: flex;
+justify-content: space-evenly;
+background-color: white;
+align-items: center;
+
+}
+.pass{
+
+margin:20px;
+width:200px;
+height:100px;
+background-color: white;
+}
+.about{
+margin-top:20px;
+width:100vw;
+display: flex;
+justify-content: space-evenly;
+background-color:white;
+align-items: center;
+
+}
+.me{
+
+margin:20px;
+width:150px;
+height:200px;
+background-color:white;
+align-items: center;
+}
+.my{
+margin-top: 100px;
+width:100vw;
+display:flex;
+justify-content: space-evenly;
+background-color:white;
+}
 .intro{
-    color:aquamarine;
+margin: 20px;
+ 
+padding-top: 30px;
+width:400px;
+height:300px;
+background-color:white;
+align-items:center;
+justify-content: center;
 }
