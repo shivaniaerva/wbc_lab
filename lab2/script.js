@@ -7,8 +7,9 @@ const anime= async  ()=>{
     const mapping=data.data.map((card)=>{
         return `
             <div class="card">
-            <h1>${card.title}</h1>
-            <img src=${card.images.jpg.image_url} alt="blaa" />
+            <h2>${card.title}</h2>
+            <img src= ${card.images.jpg.image_url} alt="blaa" />
+             <h3>score: ${card.score}</h3>
             </div>`;
     
     }).join(' ')
@@ -22,14 +23,15 @@ const filteranime =()=>{
     const wanted=document.getElementById("search").value;
     console.log(wanted);
     const fill=data.data.filter((anime)=>{
-        anime.title.toLowerCase().includes(wanted.toLowerCase());
+        return anime.title.toLowerCase().includes(wanted.toLowerCase());
     }
     );
     const showanime=fill.map((anime)=>{
-        `
-            <div class="card">
-        <h1>${anime.title}</h1>
-        <img src=${anime.images.jpg.image_url} alt="blaa" />
+        
+        return `<div class="card">
+        <h2>${anime.title}</h2>
+          <img src=${anime.images.jpg.image_url} alt="blaa" />
+         <h2 >score: ${anime.score}</h2>
         </div>
         `;
 }).join('');
