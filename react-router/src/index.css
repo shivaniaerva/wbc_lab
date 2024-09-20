@@ -1,0 +1,47 @@
+.main{
+  margin-top: 30px;
+  
+    background-image: url('https://img.freepik.com/free-vector/memphis-blue-background-with-halftone-line-elements_1017-33622.jpg');  
+    background-size: cover;  
+    background-position: center;  
+    height: 100vh;  
+    width: 100%;  
+  
+    
+    display: flex;
+    justify-content: space-evenly;
+    background-color:white;
+    flex-wrap: wrap;
+ 
+}
+.card {
+  position: relative;
+  width: 250px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1); /* Transparent background */
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37); /* Frosted glass effect */
+  backdrop-filter: blur(8px); /* Background blur */
+  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-align: center;
+  margin: 20px;
+}
+  
+
+.bar{
+  margin-top: 30px;
+  margin:10px;
+  width:100vw;
+  display: flex;
+  justify-content: space-evenly;
+  background-color:plum;
+    flex-wrap: wrap;
+}
+.id{
+  padding: 20px;
+  margin:10px;
+  width:100px;
+  height:100px;
+  background-color:palegreen;
+}
