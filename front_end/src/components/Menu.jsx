@@ -1,163 +1,172 @@
-import React, { useEffect, useState } from 'react'
-import Nav from './Nav'
-import { Box, Button, Card, CardMedia, Container, TextField, Typography, } from '@mui/material'
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs } from "firebase/firestore";
+import { Box, Button, Card, CardMedia, Container, TextField, Typography, Select, MenuItem, FormControlLabel, Switch } from '@mui/material';
+import Nav from './Nav';
+import { useNavigate } from 'react-router-dom';
+import { db, auth } from "../firebase_config";
 
-export const Menu = () => {
-     const [filter,setfilter]=useState('');
-     const [normalfood,setfood]=useState([]);
-     const items = [
-        {
-          itemname: 'Paneer Butter Masala',
-          itemcourse: 'maincourse',
-          itemtype: 'veg',
-          price: 150,
-          image: 'https://th.bing.com/th/id/OIP.-rZiit_GDlRDoR4WZ3AYpAHaLH?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Butter Chicken',
-          itemcourse: 'maincourse',
-          itemtype: 'non-veg',
-          price: 250,
-          image: 'https://th.bing.com/th/id/OIP.Mzmy9YiJlPtvVfgSIzyKDQHaLH?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Dal Tadka',
-          itemcourse: 'maincourse',
-          itemtype: 'veg',
-          price: 120,
-          image: 'https://th.bing.com/th/id/OIP.FFtgnmkwezLe63vmN4IkwAHaEL?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Fish Curry',
-          itemcourse: 'maincourse',
-          itemtype: 'non-veg',
-          price: 300,
-          image: 'https://th.bing.com/th/id/OIP.fw7txsTDDPDkhX6-ulkWoAHaEK?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Chole Bhature',
-          itemcourse: 'breakfast',
-          itemtype: 'veg',
-          price: 100,
-          image: 'https://th.bing.com/th/id/OIP.jOh-EGyjBjeTp6w2oOZWrwHaFj?w=1536&h=1152&rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Aloo Paratha',
-          itemcourse: 'breakfast',
-          itemtype: 'veg',
-          price: 90,
-          image: 'https://th.bing.com/th/id/OIP.BF_c6FGy1wlK3WOBTqPWEwHaFE?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Mutton Biryani',
-          itemcourse: 'maincourse',
-          itemtype: 'non-veg',
-          price: 350,
-          image: 'https://th.bing.com/th/id/OIP.wBu0Xsb774mtzvjhq1C3DgHaE8?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Veg Biryani',
-          itemcourse: 'maincourse',
-          itemtype: 'veg',
-          price: 180,
-          image: 'https://th.bing.com/th/id/OIP.qFXmwrhQ2JWZwu4MojnpCAHaFj?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Masala Dosa',
-          itemcourse: 'breakfast',
-          itemtype: 'veg',
-          price: 80,
-          image: 'https://vismaifood.com/storage/app/uploads/public/8b4/19e/427/thumb__1200_0_0_0_auto.jpg',
-        },
-        {
-          itemname: 'Chicken Tikka',
-          itemcourse: 'starter',
-          itemtype: 'non-veg',
-          price: 220,
-          image: 'https://th.bing.com/th/id/OIP.yqzxq9ucemxo1ATpWQisqgHaE8?rs=1&pid=ImgDetMain',
-        },
-        {
-          itemname: 'Palak Paneer',
-          itemcourse: 'maincourse',
-          itemtype: 'veg',
-          price: 140,
-          image: 'https://th.bing.com/th/id/OIP.Hghu2Y5kt4XoOqkYKxYzSAHaEK?w=1000&h=562&rs=1&pid=ImgDetMain',
-        },
-      ]
-      
-useEffect(()=>{
-setfood(items);
-},[]);
+const Menu = ({ cart, setCart }) => {
+  const [fooditems, setfood] = useState([]);
+  const [sfilter, setfilter] = useState("");
+  const [filterdfoodarray, setfil] = useState([]);
+  const [selcat, setcat] = useState("");
+  const [bool, setbool] = useState(false);
+  const [user, setUser] = useState(null); // Track logged-in user state
+  const navigate = useNavigate();
 
-const filtereditems=normalfood.filter((item)=>(
-         
-        item.itemname.toLowerCase().includes(filter.toLowerCase())
+  useEffect(() => {
+    // Listen for authentication state changes
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;
+  }, []);
 
-));
+  const getdata = async () => {
+    const querySnapshot = await getDocs(collection(db, "food"));
+    let listfood = [];
+    querySnapshot.forEach((doc) => {
+      const foodcard = { id: doc.id, ...doc.data() };
+      listfood.push(foodcard);
+    });
+    setfood(listfood);
+    setfil(listfood);
+  };
+
+  const applyFilters = () => {
+    let filteredFood = fooditems.filter((item) => {
+      const matchesName = item.name.toLowerCase().includes(sfilter.toLowerCase());
+      const matchesCategory = selcat === "" || item.course === selcat;
+      if (!bool) {
+        return matchesName && matchesCategory;
+      }
+      const matchesToggle = item.toggle === true;
+      return matchesName && matchesCategory && matchesToggle;
+    });
+    setfil(filteredFood);
+  };
+
+  useEffect(() => {
+    getdata();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [sfilter, selcat, bool]);
+
+  const addToCart = (item) => {
+    if (!user) {
+      alert("Please log in to add items to the cart.");
+      return;
+    }
+    const existingItem = cart.find((cartItem) => cartItem.id === item.id);
+    if (existingItem) {
+      setCart(cart.map((cartItem) =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      ));
+    } else {
+      setCart([...cart, { ...item, quantity: 1 }]);
+    }
+  };
+
+  const goToCart = () => {
+    navigate('/cart'); 
+  };
 
   return (
-     <> 
-         <Nav/>
-       
-        <Container sx={ {marginTop: '80px'} }>
-        <h1>Menu</h1>
-        <TextField label="Search by Item Name"
+    <div>
+      <Nav />
+      <Typography
+        variant="h4"
+        sx={{
+          margin: '20px 0',
+          textAlign: 'center',
+          animation: 'slideIn 1s ease-out',
+        }}
+      >
+        Discover Your Next Favorite Dish!
+      </Typography>
+      <Container sx={{
+        marginTop: '80px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '20px',
+        flexWrap: 'wrap',
+      }}>
+        <TextField
+          label="Search by Item Name"
           variant="outlined"
-          fullWidth
           onChange={e => setfilter(e.target.value)}
-          sx={{ marginBottom: '20px' }}>
- 
-        </TextField>
-        </Container>  
-        <Box
-  sx={{
-    display: 'flex',
-    justifyContent: 'space-evenly',
-    flexWrap: 'wrap',
-    width: '100%',
-    marginBottom: '20px',
-    height: 'auto',
-    padding: '30px',
-    gap: '20px',
-  }}
->
-  {filtereditems.map((dish, index) => (
-    <Card
-      key={index}
-      sx={{
-        width: '300px',
-        height: '400px',
-        marginBottom: '20px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-        border: '1px solid #ddd',
-        overflow: 'hidden',
-        textAlign: 'center',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'scale(1.05)',
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-        },
-      }}
-    >
-      <CardMedia
-        component="img"
-        height="200"
-        image={dish.image}
-        alt={dish.itemname}
-      />
-      <Typography variant="h6">{dish.itemname}</Typography>
-      <Typography variant="body1">{dish.itemcourse}</Typography>
-      <Typography variant="body2">{dish.itemtype}</Typography>
-      <Typography variant="h6">{dish.price}</Typography>
-      <Button variant="contained">Add to Cart</Button>
-    </Card>
-  ))}
-</Box>
+          sx={{ marginBottom: '20px' }}
+        />
+        <FormControlLabel
+          control={<Switch checked={bool} onChange={(e) => setbool(e.target.checked)} />}
+        />
+        <Select value={selcat} displayEmpty onChange={(e) => setcat(e.target.value)}>
+          <MenuItem value="">All Category</MenuItem>
+          <MenuItem value="main-course">Main-Course</MenuItem>
+          <MenuItem value="starters">Starters</MenuItem>
+          <MenuItem value="dessert">Desserts</MenuItem>
+          <MenuItem value="beverages">Beverages</MenuItem>
+        </Select>
+      </Container>
 
-         
-       </>  
-        
-    
-  )
-}
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        flexWrap: 'wrap',
+        width: '100%',
+        marginBottom: '20px',
+        height: 'auto',
+        padding: '30px',
+        gap: '20px',
+      }}>
+        {filterdfoodarray.map((dish) => (
+          <Card
+            key={dish.id}
+            sx={{
+              width: '300px',
+              height: '400px',
+              marginBottom: '20px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              borderRadius: '10px',
+              border: '1px solid #ddd',
+              overflow: 'hidden',
+              textAlign: 'center',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+              },
+            }}
+          >
+            <CardMedia
+              component="img"
+              height="200"
+              image={dish.img}
+              alt={dish.name}
+            />
+            <Typography variant="h6">{dish.name}</Typography>
+            <Typography variant="body1">{dish.course}</Typography>
+            {dish.toggle ? (
+              <Typography variant="h6">Vegetarian</Typography>
+            ) : (
+              <Typography variant="h6">Non-Vegetarian</Typography>
+            )}
+            <Typography variant="body1">₹{dish.price}</Typography>
+            <Button variant="contained" onClick={() => addToCart(dish)}>Add to Cart</Button>
+          </Card>
+        ))}
+      </Box>
+
+      <Button variant="contained" onClick={goToCart}>Go to Cart</Button>
+    </div>
+  );
+};
+
+export default Menu;
+
+
